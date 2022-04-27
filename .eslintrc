@@ -1,0 +1,4 @@
+{
+  "extends": ["jc/base", "jc/import", "jc/typescript"],
+  "root": true
+}

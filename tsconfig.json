@@ -1,0 +1,10 @@
+{
+  "extends": "tsconfig-jc",
+  "compilerOptions": {
+    "target": "es2020",
+    "noEmit": true,
+    "lib": ["esnext", "dom"],
+    "rootDir": "."
+  },
+  "exclude": ["node_modules"]
+}
