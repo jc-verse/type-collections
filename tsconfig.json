@@ -4,7 +4,9 @@
     "target": "es2020",
     "noEmit": true,
     "lib": ["esnext", "dom"],
-    "rootDir": "."
+    "rootDir": "./src",
+    "skipLibCheck": false
   },
+  "include": ["src"],
   "exclude": ["node_modules"]
 }

@@ -1,22 +1,22 @@
 {
-  "name": "ts-conversion",
+  "name": "ts-conversions",
   "description": "Utility types that transform different TS constructs between each other",
   "version": "0.0.0",
   "author": "Joshua Chen <sidachen2003@gmail.com>",
   "license": "MIT",
+  "types": "src/index.d.ts",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jc-verse/js-style-guide.git",
-    "directory": "packages/create-jc-project"
+    "url": "git+https://github.com/jc-verse/ts-conversions.git"
   },
   "bugs": {
-    "url": "https://github.com/jc-verse/js-style-guide/issues"
+    "url": "https://github.com/jc-verse/ts-conversions/issues"
   },
-  "homepage": "https://jc-verse.github.io/js-style-guide/",
+  "homepage": "https://jc-verse.github.io/ts-conversions/",
   "scripts": {
     "format": "prettier -w .",
     "lint": "eslint \"**/*.{js,ts,jsx,tsx}\"",
@@ -24,6 +24,7 @@
   },
   "packageManager": "yarn@3.2.0",
   "devDependencies": {
+    "@type-challenges/utils": "^0.1.1",
     "@typescript-eslint/eslint-plugin": "^5.21.0",
     "@typescript-eslint/parser": "^5.21.0",
     "cspell": "^5.19.7",

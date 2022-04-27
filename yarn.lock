@@ -436,6 +436,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@type-challenges/utils@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "@type-challenges/utils@npm:0.1.1"
+  checksum: ded642e9f1c1329e74e94a89faa83df53601a6c044c9a7e3776affc2535b3026a05582c55f8419ea367d97f83920f92e933f017d5cc942154a15723ae5c8f9a7
+  languageName: node
+  linkType: hard
+
 "@types/json-schema@npm:^7.0.9":
   version: 7.0.11
   resolution: "@types/json-schema@npm:7.0.11"
@@ -2919,10 +2926,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-conversion@workspace:.":
+"ts-conversions@workspace:.":
   version: 0.0.0-use.local
-  resolution: "ts-conversion@workspace:."
+  resolution: "ts-conversions@workspace:."
   dependencies:
+    "@type-challenges/utils": ^0.1.1
     "@typescript-eslint/eslint-plugin": ^5.21.0
     "@typescript-eslint/parser": ^5.21.0
     cspell: ^5.19.7
