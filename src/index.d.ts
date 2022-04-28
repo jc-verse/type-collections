@@ -10,14 +10,12 @@ import type { OneOf, IsNumLiteral } from "./utils";
  * type D = Equal<U2I<never>,               unknown            >; // Special!
  * ```
  *
- * Note that `unknown` and `never` are special-cased, because the invariant is:
- * `U2I<A | B>` <=> `U2I<A> & U2I<B>`.
- *
- * Note also that your union may already be collapsed before it can be converted
- * to a tuple. So `U2I<"b" | string>` is `string`.
- *
- * The returned type will always be assignable to the input `U` (TS cannot prove
- * this on its own in a generic context).
+ * - **Note 1** `unknown` and `never` are special-cased, because the invariant
+ *   is: `U2I<A | B>` <=> `U2I<A> & U2I<B>`.
+ * - **Note 2** Your union may already be collapsed before it can be converted
+ *   to a tuple. So `U2I<"b" | string>` is `string`.
+ * - **Note 3** The returned type will always be assignable to the input `U` (TS
+ *   cannot prove this on its own in a generic context).
  */
 export type U2I<U> = [U] extends [never]
   ? unknown
@@ -31,7 +29,7 @@ export type U2I<U> = [U] extends [never]
 
 type _U2T<U, L> = [U] extends [never] ? [] : [...U2T<Exclude<U, L>>, L];
 /**
- * Union to tuple.
+ * Union to tuple. Inverse of {@link T2U}.
  *
  * ```ts
  * type Examples = [
@@ -43,15 +41,77 @@ type _U2T<U, L> = [U] extends [never] ? [] : [...U2T<Exclude<U, L>>, L];
  * ];
  * ```
  *
- * This will turn the unordered union into an ordered collection. If the union
- * is homogeneous, you should expect the order to be preserved; but otherwise,
- * it will be ordered according to the internal representation of the type. Do
- * not take the actual ordering too seriously.
- *
- * Note also that your union may already be collapsed before it can be converted
- * to a tuple. So `U2T<"b" | string>` is `[string]`.
+ * - **Note 1** This will turn the unordered union into an ordered collection.
+ *   If the union is homogeneous, you should expect the order to be preserved;
+ *   but otherwise, it will be ordered according to the internal representation
+ *   of the type. Do not take the actual ordering too seriously.
+ * - **Note 2** Your union may already be collapsed before it can be converted
+ *   to a tuple. So `U2T<"b" | string>` is `[string]`.
  */
 export type U2T<U> = _U2T<U, OneOf<U>>;
+
+/**
+ * Tuple to union. Inverse of {@link U2T}.
+ *
+ * ```ts
+ * type Examples = [
+ *   Equal<T2U<["a", "b"]>, "a" | "b">,
+ *   Equal<T2U<string[]>,   string   >,
+ * ];
+ * ```
+ */
+export type T2U<T extends unknown[]> = T[number];
+
+type _U2P<U, R> = [U] extends [never]
+  ? []
+  : U extends U
+  ? [U, ...U2P<Exclude<R, U>>]
+  : never;
+/**
+ * Union to permutation. Very similar to {@link U2T}, but it generates all
+ * possible permutations, so it's not order-sensitive.
+ *
+ * ```ts
+ * type Examples = [
+ *   Equal<U2P<"a" | "b">, ["a", "b"] | ["b", "a"]>,
+ *   Equal<U2P<string>,    [string]               >,
+ * ];
+ * ```
+ */
+export type U2P<U> = _U2P<U, U>;
+
+type TemplateVal = string | number | bigint | boolean | null | undefined;
+
+/**
+ * Takes an array, and joins them into a single string separated by `Sep`,
+ * similar to `Array#join`. Inverse of {@link Split}.
+ */
+export type Join<
+  Arr extends TemplateVal[],
+  Sep extends TemplateVal = "",
+> = Arr extends [infer F, ...infer R]
+  ? F extends TemplateVal
+    ? R extends [TemplateVal, ...TemplateVal[]]
+      ? `${F}${Sep}${Join<R, Sep>}`
+      : `${F}`
+    : never
+  : "";
+
+/**
+ * Takes a string, and returns a list of strings split at `Sep`. The `Sep`
+ * themselves are not included, similar to `String#split`. Inverse of
+ * {@link Join}.
+ */
+export type Split<
+  S extends string,
+  Sep extends TemplateVal = ",",
+> = S extends ""
+  ? Sep extends ""
+    ? []
+    : [S]
+  : S extends `${infer F}${Sep}${infer R}`
+  ? [F, ...Split<R, Sep>]
+  : [S];
 
 /**
  * Takes a list of key-value pairs, and returns an object type, similar to
@@ -67,9 +127,9 @@ export type U2T<U> = _U2T<U, OneOf<U>>;
  * ];
  * ```
  *
- * Note: it is possible to produce malformed types, e.g. `FromEntries<[["a", 1],
- * [string, 3]]>` will produce `{ a: 1; [x: string]: 3 }`, which no value is
- * assignable to.
+ * - **Note 1** It is possible to produce malformed types, e.g.
+ * `FromEntries<[["a", 1], [string, 3]]>` will produce
+ * `{ a: 1; [x: string]: 3 }`, which no value is assignable to.
  */
 export type FromEntries<KV extends [PropertyKey, unknown][]> = {
   [K in keyof KV as KV[K] extends [PropertyKey, unknown]
@@ -95,8 +155,8 @@ export type FromEntries<KV extends [PropertyKey, unknown][]> = {
  * ];
  * ```
  *
- * You shouldn't rely on the actual ordering of the entries list, because it
- * uses the TS internal representation of the object type.
+ * - **Note 1** You shouldn't rely on the actual ordering of the entries list,
+ * because it uses the TS internal representation of the object type.
  */
 export type Entries<O extends object> = O extends unknown[]
   ? { [K in keyof O]: [K, O[K]] }
@@ -131,17 +191,28 @@ type _Tuple<
 > = L extends Tup["length"] ? Tup : _Tuple<L, T, [...Tup, T]>;
 /**
  * Creates a tuple with length `L`, filled with a given type. The upper bound of
- * `L` seems to be `1000` (recursion limit).
+ * `L` seems to be `1000` (recursion limit). Inverse of {@link Length}.
  *
  * ```ts
- * type A = Equal<Tuple<2, number>, [number, number]              >;
- * type B = Equal<Tuple<3>,         [unknown, unknown, unknown]   >;
- * type B = Equal<Tuple<1 | 2>,     [unknown] | [unknown, unknown]>;
- * type C = Equal<Tuple<number>,    unknown[]                     >;
+ * type Examples = [
+ *   Equal<Tuple<2, number>, [number, number]              >,
+ *   Equal<Tuple<3>,         [unknown, unknown, unknown]   >,
+ *   Equal<Tuple<1 | 2>,     [unknown] | [unknown, unknown]>,
+ *   Equal<Tuple<number>,    unknown[]                     >,
+ * ];
  * ```
  */
 export type Tuple<L extends number, T = unknown> = number extends L
   ? T[]
   : _Tuple<L, T, []>;
 
+/**
+ * Gets the length of an array/tuple. Inverse of {@link Tuple}.
+ *
+ * ```ts
+ * type Examples = [
+ *   Equal<Length<[string, number]>, 2     >,
+ *   Equal<Length<string[]>,         number>,
+ * ];
+ */
 export type Length<T extends unknown[]> = T["length"];

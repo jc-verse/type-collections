@@ -1,4 +1,16 @@
-import type { U2I, U2T, FromEntries, Entries, KeyUnion, Tuple } from ".";
+import type {
+  U2I,
+  U2T,
+  T2U,
+  U2P,
+  Join,
+  Split,
+  FromEntries,
+  Entries,
+  KeyUnion,
+  Tuple,
+  Length,
+} from ".";
 import type { Expect, Equal, NotEqual } from "@type-challenges/utils";
 
 type U2ITests = [
@@ -16,7 +28,6 @@ type U2ITests = [
   Expect<Equal<U2I<number>, number>>,
   Expect<Equal<U2I<boolean>, never>>,
   Expect<Equal<U2I<"b" | string>, string>>,
-  Expect<Equal<U2I<`a ${"b" | string}`>, `a ${string}`>>,
   Expect<Equal<U2I<unknown>, never>>,
   Expect<Equal<U2I<never>, unknown>>,
 ];
@@ -35,9 +46,55 @@ type U2TTests = [
   Expect<Equal<U2T<number>, [number]>>,
   Expect<Equal<U2T<boolean>, [false, true]>>,
   Expect<Equal<U2T<"b" | string>, [string]>>,
-  Expect<Equal<U2T<`a ${"b" | string}`>, [`a ${string}`]>>,
   Expect<Equal<U2T<unknown>, [unknown]>>,
   Expect<Equal<U2T<never>, []>>,
+];
+
+type T2UTests = [
+  Expect<Equal<T2U<["a", "b"]>, "a" | "b">>,
+  Expect<Equal<T2U<string[]>, string>>,
+  Expect<Equal<T2U<never>, never>>,
+  Expect<Equal<T2U<[]>, never>>,
+];
+
+type U2PTests = [
+  Expect<Equal<U2P<boolean>, [true, false] | [false, true]>>,
+  Expect<
+    Equal<
+      U2P<"a" | "b" | "c">,
+      | ["a", "b", "c"]
+      | ["a", "c", "b"]
+      | ["b", "a", "c"]
+      | ["b", "c", "a"]
+      | ["c", "a", "b"]
+      | ["c", "b", "a"]
+    >
+  >,
+  Expect<Equal<U2P<string>, [string]>>,
+  Expect<Equal<U2P<unknown>, [unknown]>>,
+  Expect<Equal<U2P<never>, []>>,
+];
+
+type JoinTests = [
+  Expect<Equal<Join<[1, 2, 3]>, "123">>,
+  Expect<Equal<Join<[1, 2, 3], ",">, "1,2,3">>,
+  Expect<Equal<Join<[1, 2] | [3, 4], ",">, "1,2" | "3,4">>,
+  Expect<Equal<Join<[string, number], ",">, `${string},${number}`>>,
+  Expect<Equal<Join<[number, ...number[]], ",">, `${number}`>>,
+  Expect<Equal<Join<string[], ",">, "">>,
+  Expect<Equal<Join<[], ",">, "">>,
+  Expect<Equal<Join<never, ",">, never>>,
+];
+
+type SplitTests = [
+  Expect<Equal<Split<"1,2,3">, ["1", "2", "3"]>>,
+  Expect<Equal<Split<"123", "">, ["1", "2", "3"]>>,
+  Expect<Equal<Split<"", "">, []>>,
+  Expect<Equal<Split<"1234">, ["1234"]>>,
+  Expect<Equal<Split<"1,2" | "3,4">, ["1", "2"] | ["3", "4"]>>,
+  Expect<Equal<Split<",,,">, ["", "", "", ""]>>,
+  Expect<Equal<Split<"123", 2>, ["1", "3"]>>,
+  Expect<Equal<Split<never>, never>>,
 ];
 
 type FromEntriesTests = [
@@ -95,4 +152,9 @@ type TupleTests = [
   Expect<Equal<Tuple<3>, [unknown, unknown, unknown]>>,
   Expect<Equal<Tuple<1 | 2>, [unknown] | [unknown, unknown]>>,
   Expect<Equal<Tuple<number>, unknown[]>>,
+];
+
+type LengthTests = [
+  Expect<Equal<Length<[string, number]>, 2>>,
+  Expect<Equal<Length<string[]>, number>>,
 ];
