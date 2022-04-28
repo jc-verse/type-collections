@@ -1,6 +1,6 @@
 {
-  "name": "ts-conversions",
-  "description": "Utility types that transform different TS constructs between each other",
+  "name": "type-collections",
+  "description": "Utility types that manipulate different kinds of type-level collections",
   "version": "0.0.0",
   "author": "Joshua Chen <sidachen2003@gmail.com>",
   "license": "MIT",
@@ -11,12 +11,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jc-verse/ts-conversions.git"
+    "url": "git+https://github.com/jc-verse/type-collections.git"
   },
   "bugs": {
-    "url": "https://github.com/jc-verse/ts-conversions/issues"
+    "url": "https://github.com/jc-verse/type-collections/issues"
   },
-  "homepage": "https://jc-verse.github.io/ts-conversions/",
+  "homepage": "https://jc-verse.github.io/type-collections/",
   "scripts": {
     "format": "prettier -w .",
     "lint": "eslint \"**/*.{js,ts,jsx,tsx}\"",

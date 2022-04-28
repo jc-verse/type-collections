@@ -16,3 +16,6 @@ export type IsNumLiteral<N> = [N] extends [number]
     ? false
     : true
   : false;
+
+// TODO: remove in 4.7 with infer...extends
+export type Is<T extends C, C> = T;

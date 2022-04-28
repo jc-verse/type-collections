@@ -1,6 +1,6 @@
-# ts-conversion
+# type-collections
 
-Utility types that transform different TS constructs between each other
+Utility types that manipulate different kinds of type-level collections
 
 ## Installation
 
