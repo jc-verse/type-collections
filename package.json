@@ -1,7 +1,7 @@
 {
   "name": "type-collections",
   "description": "Utility types that manipulate different kinds of type-level collections",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "author": "Joshua Chen <sidachen2003@gmail.com>",
   "license": "MIT",
   "types": "src/index.d.ts",
