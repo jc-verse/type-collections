@@ -14,6 +14,8 @@ import type {
 } from ".";
 import type { Expect, Equal, NotEqual } from "@type-challenges/utils";
 
+export {};
+
 type U2ITests = [
   Expect<
     Equal<U2I<{ a: number } | { b: string }>, { a: number } & { b: string }>

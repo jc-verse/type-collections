@@ -1,5 +1,8 @@
 import type { OneOf, IsNumLiteral, Is } from "./utils";
 
+// Important to make this file a module
+export {};
+
 /**
  * Union to intersection.
  *
