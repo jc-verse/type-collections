@@ -139,3 +139,28 @@ export type Tuple<L extends number, T = unknown> = number extends L
  * Gets the length of an array/tuple. Inverse of {@link Tuple}.
  */
 export type Length<T extends unknown[]> = T["length"];
+
+type XPathTuple<O, K extends (string | number)[]> = K extends [
+  Is<infer F, string | number>,
+  ...Is<infer R, (string | number)[]>,
+]
+  ? `${F}` extends keyof O
+    ? R extends []
+      ? O[`${F}`]
+      : XPathTuple<O[`${F}`], R>
+    : never
+  : never;
+
+type XPathString<O, K extends string> = K extends `${infer F}.${infer R}`
+  ? F extends keyof O
+    ? XPathString<O[F], R>
+    : never
+  : K extends keyof O
+  ? O[K]
+  : never;
+
+export type XPath<O, K extends (string | number)[] | string> = K extends string
+  ? XPathString<O, K>
+  : K extends (string | number)[]
+  ? XPathTuple<O, K>
+  : never;

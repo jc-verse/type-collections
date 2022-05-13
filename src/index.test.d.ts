@@ -10,6 +10,7 @@ import type {
   KeyUnion,
   Tuple,
   Length,
+  XPath,
 } from ".";
 import type { Expect, Equal, NotEqual } from "@type-challenges/utils";
 
@@ -157,4 +158,35 @@ type TupleTests = [
 type LengthTests = [
   Expect<Equal<Length<[string, number]>, 2>>,
   Expect<Equal<Length<string[]>, number>>,
+];
+
+type XPathTests = [
+  Expect<Equal<XPath<{ a: 1; b: 2 }, "a">, 1>>,
+  Expect<Equal<XPath<{ a: { b: 3 }; b: 2 }, "a.b">, 3>>,
+  Expect<Equal<XPath<{ a: { b: [0, 1] }; b: 2 }, "a.b">, [0, 1]>>,
+  Expect<Equal<XPath<[0, 1], "1">, 1>>,
+  Expect<Equal<XPath<{ a: [0, 1]; b: 2 }, "a.1">, 1>>,
+  Expect<Equal<XPath<{ a: [0, { c: 3 }]; b: 2 }, "a.1.c">, 3>>,
+  Expect<Equal<XPath<{ a: [0, { c: 3 }]; b: 2 }, "">, never>>,
+  Expect<Equal<XPath<{ a: [0, { c: 3 }]; b: 2 }, "c">, never>>,
+  Expect<Equal<XPath<{ a: [0, { c: 3 }]; b: 2 }, "a.2">, never>>,
+  Expect<Equal<XPath<Record<string, boolean>, string>, boolean>>,
+  Expect<
+    Equal<XPath<Record<number, boolean> & Record<string, Date>, string>, Date>
+  >,
+
+  Expect<Equal<XPath<{ a: 1; b: 2 }, ["a"]>, 1>>,
+  Expect<Equal<XPath<{ a: { b: 3 }; b: 2 }, ["a", "b"]>, 3>>,
+  Expect<Equal<XPath<{ a: { b: [0, 1] }; b: 2 }, ["a", "b"]>, [0, 1]>>,
+  Expect<Equal<XPath<[0, 1], [1]>, 1>>,
+  Expect<Equal<XPath<{ a: [0, 1]; b: 2 }, ["a", 1]>, 1>>,
+  Expect<Equal<XPath<{ a: [0, { c: 3 }]; b: 2 }, ["a", 1, "c"]>, 3>>,
+  Expect<Equal<XPath<{ a: [0, { c: 3 }]; b: 2 }, [""]>, never>>,
+  Expect<Equal<XPath<{ a: [0, { c: 3 }]; b: 2 }, ["c"]>, never>>,
+  Expect<Equal<XPath<{ a: [0, { c: 3 }]; b: 2 }, ["a", 2]>, never>>,
+  Expect<Equal<XPath<Record<string, boolean>, [string]>, boolean>>,
+  // FIXME
+  Expect<
+    Equal<XPath<Record<number, boolean> & Record<string, Date>, [number]>, Date>
+  >,
 ];
