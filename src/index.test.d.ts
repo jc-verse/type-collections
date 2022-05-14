@@ -14,8 +14,6 @@ import type {
 } from ".";
 import type { Expect, Equal, NotEqual } from "@type-challenges/utils";
 
-export {};
-
 type U2ITests = [
   Expect<
     Equal<U2I<{ a: number } | { b: string }>, { a: number } & { b: string }>
@@ -163,6 +161,7 @@ type LengthTests = [
 ];
 
 type XPathTests = [
+  Expect<Equal<XPath<{ a: 1; b: 2 }, "">, never>>,
   Expect<Equal<XPath<{ a: 1; b: 2 }, "a">, 1>>,
   Expect<Equal<XPath<{ a: { b: 3 }; b: 2 }, "a.b">, 3>>,
   Expect<Equal<XPath<{ a: { b: [0, 1] }; b: 2 }, "a.b">, [0, 1]>>,
@@ -177,6 +176,7 @@ type XPathTests = [
     Equal<XPath<Record<number, boolean> & Record<string, Date>, string>, Date>
   >,
 
+  Expect<Equal<XPath<{ a: 1; b: 2 }, []>, { a: 1; b: 2 }>>,
   Expect<Equal<XPath<{ a: 1; b: 2 }, ["a"]>, 1>>,
   Expect<Equal<XPath<{ a: { b: 3 }; b: 2 }, ["a", "b"]>, 3>>,
   Expect<Equal<XPath<{ a: { b: [0, 1] }; b: 2 }, ["a", "b"]>, [0, 1]>>,
@@ -185,10 +185,12 @@ type XPathTests = [
   Expect<Equal<XPath<{ a: [0, { c: 3 }]; b: 2 }, ["a", 1, "c"]>, 3>>,
   Expect<Equal<XPath<{ a: [0, { c: 3 }]; b: 2 }, [""]>, never>>,
   Expect<Equal<XPath<{ a: [0, { c: 3 }]; b: 2 }, ["c"]>, never>>,
-  Expect<Equal<XPath<{ a: [0, { c: 3 }]; b: 2 }, ["a", 2]>, never>>,
+  Expect<Equal<XPath<{ a: [0, { c: 3 }]; b: 2 }, ["a", 2]>, undefined>>,
   Expect<Equal<XPath<Record<string, boolean>, [string]>, boolean>>,
-  // FIXME
   Expect<
-    Equal<XPath<Record<number, boolean> & Record<string, Date>, [number]>, Date>
+    Equal<
+      XPath<Record<number, boolean> & Record<string, Date>, [number]>,
+      boolean
+    >
   >,
 ];

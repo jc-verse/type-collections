@@ -143,14 +143,14 @@ export type Tuple<L extends number, T = unknown> = number extends L
  */
 export type Length<T extends unknown[]> = T["length"];
 
-type XPathTuple<O, K extends (string | number)[]> = K extends [
-  Is<infer F, string | number>,
-  ...Is<infer R, (string | number)[]>,
-]
-  ? `${F}` extends keyof O
-    ? R extends []
-      ? O[`${F}`]
-      : XPathTuple<O[`${F}`], R>
+type XPathTuple<O, K extends (string | number)[]> = K extends []
+  ? O
+  : K extends [
+      Is<infer F, string | number>,
+      ...Is<infer R, (string | number)[]>,
+    ]
+  ? F extends keyof O
+    ? XPathTuple<O[F], R>
     : never
   : never;
 
