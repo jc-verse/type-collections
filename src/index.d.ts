@@ -1,4 +1,4 @@
-import type { OneOf, IsNumLiteral, Is } from "./utils";
+import type { OneOf, IsNumLiteral, Is, ArgsCompatible } from "./utils";
 
 // Important to make this file a module
 export {};
@@ -166,4 +166,18 @@ export type XPath<O, K extends (string | number)[] | string> = K extends string
   ? XPathString<O, K>
   : K extends (string | number)[]
   ? XPathTuple<O, K>
+  : never;
+
+export type Return<Overload, Args extends unknown[]> = Overload extends (
+  ...args: infer A
+) => infer R
+  ? Overload extends ((...args: A) => R) & infer O
+    ? Return<O, Args> extends infer OReturn
+      ? [OReturn] extends [never]
+        ? ArgsCompatible<Args, A> extends true
+          ? R
+          : never
+        : OReturn
+      : never
+    : never
   : never;
